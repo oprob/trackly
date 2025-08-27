@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Group } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Users, Receipt, Calendar } from 'lucide-react';
 
 interface GroupCardProps {

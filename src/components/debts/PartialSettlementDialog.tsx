@@ -54,8 +54,9 @@ export function PartialSettlementDialog({ isOpen, onClose, onSuccess, debt }: Pa
       onSuccess();
       onClose();
       setPaymentAmount('');
-    } catch (error: any) {
-      setError(error.message || 'Failed to record payment');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to record payment';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

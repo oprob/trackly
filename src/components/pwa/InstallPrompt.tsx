@@ -47,7 +47,7 @@ export function InstallPrompt() {
     window.addEventListener('appinstalled', handleAppInstalled);
 
     if (window.matchMedia('(display-mode: standalone)').matches || 
-        (window.navigator as any)?.standalone === true) {
+        (window.navigator as { standalone?: boolean })?.standalone === true) {
       setIsInstalled(true);
     }
 

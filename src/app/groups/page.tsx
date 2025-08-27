@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserGroups } from '@/lib/firestore';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -17,7 +17,7 @@ export default function GroupsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
-  const fetchGroups = async () => {
+  const fetchGroups = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -29,11 +29,11 @@ export default function GroupsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchGroups();
-  }, [user]);
+  }, [user, fetchGroups]);
 
   const handleFormClose = () => {
     setShowForm(false);
@@ -42,11 +42,6 @@ export default function GroupsPage() {
   const handleFormSuccess = () => {
     fetchGroups();
   };
-
-  const totalBalance = groups.reduce((sum, group) => {
-    const currentUser = group.members.find(m => m.userId === user?.uid);
-    return sum + (currentUser?.balance || 0);
-  }, 0);
 
   const totalExpenses = groups.reduce((sum, group) => 
     sum + group.expenses.reduce((expSum, expense) => expSum + expense.amount, 0), 0

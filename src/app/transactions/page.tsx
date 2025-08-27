@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTransactions } from '@/lib/firestore';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -31,7 +31,7 @@ export default function TransactionsPage() {
     dateTo: '',
   });
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -44,11 +44,11 @@ export default function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [user]);
+  }, [user, fetchTransactions]);
 
   useEffect(() => {
     let filtered = transactions;

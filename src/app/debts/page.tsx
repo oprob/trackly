@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getDebts } from '@/lib/firestore';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -19,7 +19,7 @@ export default function DebtsPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingDebt, setEditingDebt] = useState<Debt | undefined>();
 
-  const fetchDebts = async () => {
+  const fetchDebts = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -31,11 +31,11 @@ export default function DebtsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchDebts();
-  }, [user]);
+  }, [user, fetchDebts]);
 
   const handleEdit = (debt: Debt) => {
     setEditingDebt(debt);

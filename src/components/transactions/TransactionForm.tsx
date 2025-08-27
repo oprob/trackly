@@ -81,8 +81,9 @@ export function TransactionForm({ isOpen, onClose, onSuccess, transaction }: Tra
 
       onSuccess();
       onClose();
-    } catch (error: any) {
-      setError(error.message || 'Failed to save transaction');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save transaction';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

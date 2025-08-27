@@ -113,8 +113,9 @@ export function GroupExpenseForm({ isOpen, onClose, onSuccess, group }: GroupExp
         date: new Date().toISOString().split('T')[0],
       });
       setCustomSplits({});
-    } catch (error: any) {
-      setError(error.message || 'Failed to add expense');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add expense';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -227,7 +228,7 @@ export function GroupExpenseForm({ isOpen, onClose, onSuccess, group }: GroupExp
 
           <div className="space-y-4">
             <Label>Split Method</Label>
-            <Tabs value={splitType} onValueChange={(value: 'equal' | 'custom') => setSplitType(value)}>
+            <Tabs value={splitType} onValueChange={(value) => setSplitType(value as 'equal' | 'custom')}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="equal">Split Equally</TabsTrigger>
                 <TabsTrigger value="custom">Custom Split</TabsTrigger>

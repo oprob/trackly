@@ -2,17 +2,12 @@ import {
   collection,
   doc,
   getDocs,
-  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
   query,
   where,
   orderBy,
-  limit,
-  Timestamp,
-  WriteBatch,
-  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Transaction, Debt, Group, User } from '@/types';

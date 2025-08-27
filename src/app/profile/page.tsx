@@ -10,15 +10,16 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { User, Mail, Calendar, Shield, LogOut, Save, Edit2 } from 'lucide-react';
+import { User, Mail, Calendar, Shield, Save, Edit2 } from 'lucide-react';
 import { updateProfile } from 'firebase/auth';
 
 export default function ProfilePage() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (user?.displayName) {
@@ -39,22 +40,17 @@ export default function ProfilePage() {
       setIsEditing(false);
       setMessage('Profile updated successfully!');
       setTimeout(() => setMessage(''), 3000);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error updating profile:', error);
-      setMessage('Failed to update profile. Please try again.');
-      setTimeout(() => setMessage(''), 3000);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update profile. Please try again.';
+      setError(errorMessage);
+      setTimeout(() => setError(''), 3000);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
+
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Not available';
@@ -223,9 +219,9 @@ export default function ProfilePage() {
                   </div>
                 )}
                 
-                {success && (
+                {message && (
                   <div className="p-3 text-sm text-green-500 bg-green-50 rounded-md">
-                    {success}
+                    {message}
                   </div>
                 )}
 
@@ -266,18 +262,6 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Sign Out</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Sign out of your account on this device.
-                  </p>
-                  <Button variant="outline" onClick={handleLogout}>
-                    Sign Out
-                  </Button>
-                </div>
-
-                <Separator />
-
                 <div>
                   <h3 className="font-medium mb-2 text-red-600">Danger Zone</h3>
                   <p className="text-sm text-muted-foreground mb-4">

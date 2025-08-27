@@ -28,8 +28,9 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
 
     try {
       await signIn(email, password);
-    } catch (error: any) {
-      setError(error.message || 'Failed to sign in');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -41,8 +42,9 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
 
     try {
       await signInWithGoogle();
-    } catch (error: any) {
-      setError(error.message || 'Failed to sign in with Google');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in with Google';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -128,7 +130,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </Button>
 
         <div className="text-center text-sm">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <button
             type="button"
             className="text-primary underline-offset-4 hover:underline"

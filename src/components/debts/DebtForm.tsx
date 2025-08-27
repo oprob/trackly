@@ -39,7 +39,7 @@ export function DebtForm({ isOpen, onClose, onSuccess, debt }: DebtFormProps) {
     setError('');
 
     try {
-      const debtData: any = {
+      const debtData: Omit<Debt, 'id' | 'createdAt' | 'updatedAt'> = {
         userId: user.uid,
         creditorName: formData.creditorName,
         amount: parseFloat(formData.amount),
@@ -47,12 +47,8 @@ export function DebtForm({ isOpen, onClose, onSuccess, debt }: DebtFormProps) {
         type: formData.type,
         paidAmount: debt?.paidAmount || 0,
         isSettled: false,
+        dueDate: formData.dueDate || undefined,
       };
-
-      // Only add dueDate if it's provided
-      if (formData.dueDate) {
-        debtData.dueDate = formData.dueDate;
-      }
 
       if (debt) {
         await updateDebt(debt.id, debtData);
@@ -62,8 +58,9 @@ export function DebtForm({ isOpen, onClose, onSuccess, debt }: DebtFormProps) {
 
       onSuccess();
       onClose();
-    } catch (error: any) {
-      setError(error.message || 'Failed to save debt');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save debt';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

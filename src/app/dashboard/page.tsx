@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getTransactions, getDebts, getUserGroups } from '@/lib/firestore';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -12,17 +12,17 @@ import { DebtSummary } from '@/components/dashboard/DebtSummary';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Clock } from 'lucide-react';
-import type { Transaction, Debt, Group } from '@/types';
+import type { Transaction, Debt } from '@/types';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [debts, setDebts] = useState<Debt[]>([]);
-  const [groups, setGroups] = useState<Group[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!user) {
       console.log('No user found, skipping data fetch');
       return;
@@ -47,18 +47,18 @@ export default function DashboardPage() {
 
       setTransactions(transactionsData);
       setDebts(debtsData);
-      setGroups(groupsData);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to fetch dashboard data:', error);
-      setError(error.message || 'Failed to load data. Please try refreshing.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load data. Please try refreshing.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchData();
-  }, [user]);
+  }, [user, fetchData]);
 
   // Refresh data when component becomes visible (user navigates back to dashboard)
   useEffect(() => {
@@ -79,7 +79,7 @@ export default function DashboardPage() {
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleFocus);
     };
-  }, [user, loading]);
+  }, [user, loading, fetchData]);
 
   if (loading) {
     return (
@@ -145,7 +145,7 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">
-              Welcome back, {user?.displayName || 'User'}! Here's your financial overview.
+              Welcome back, {user?.displayName || 'User'}! Here&apos;s your financial overview.
             </p>
           </div>
           <Button

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { X, Plus } from 'lucide-react';
-import type { Group, GroupMember } from '@/types';
+import type { GroupMember } from '@/types';
 
 interface GroupFormProps {
   isOpen: boolean;
@@ -83,8 +83,9 @@ export function GroupForm({ isOpen, onClose, onSuccess }: GroupFormProps) {
       // Reset form
       setFormData({ name: '', description: '' });
       setMemberEmails(['']);
-    } catch (error: any) {
-      setError(error.message || 'Failed to create group');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create group';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
